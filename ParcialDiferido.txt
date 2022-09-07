@@ -1,0 +1,197 @@
+1.
+INICIO
+Buffer EstudAntes
+            Dispositivo Disco
+            Reg_e
+            Cod                                        X[9]
+            FechaIngreso
+            Dia                             N[2]
+            Mes                           N[2]
+            Año                            N[4]
+            Nom                                      X[30]
+            Prom                                     N[1.1]
+Fin-Buffer
+
+Buffer Cambios
+            Dispositivo Disco
+            Reg_c
+            Codc                                      X[9]
+            Tipo                                       N[1]
+            FechaIngresoc
+            Diac                           N[2]
+            Mesc                         N[2]
+            Añoc                          N[4]
+            Nomc                                    X[30]
+            Promc                                   N[1.1]
+Fin-Buffer
+
+Buffer temp
+	Dispositivo Disco
+            Reg_t
+            Cod                                        X[9]
+            FechaIngresot
+            Diat                             N[2]
+            Mes                           N[2]
+            Año                            N[4]
+            Nom                                      X[30]
+            Prom             
+FInBuffer
+
+Abrir Estudantes("r")
+Abrir Cambios("r")
+Abrir Temp("w")
+Leer Reg_e
+Leer Reg_c
+new_e<-0
+erase_e<-0
+npromc<-0
+promc<-0
+MQ(!Eof(EstudAntes) || !Eof(Cambios))
+	si(cod==codc) ent
+	   si(Tipo==1) ent // mismo y tipo retirar
+		erase_e<-erase_e+1
+           sino
+		si(Tipo==3) // cambiar promedio
+		   reg_t<-reg_c
+		   nprom<-nprom+1
+		   promc<-promc+Promc
+		   Escribir reg_t
+		   
+		FInsi
+		Leer reg_c
+		Leer reg_e
+	   Finsi
+	sino // cod!=codc
+	    si(cod<codc) ent
+		reg_t<-reg_e 	// Copiar estudiante existente
+		Escribir reg_t
+		Leer reg_e // Ir a siguiente estudiante
+	    sino
+		si(Tipo==2) ent // Añadir estudiante
+			new_e<-new_e+1
+			reg_t<-reg_c
+			Escribir reg_t	
+		FInsi
+		Leer reg_c // ir a siguiente cambio
+	    Finsi
+	FInsi
+	
+FINMQ
+MQ(!Eof(Estudiantes)) // Pasar estudiantes si quedan
+	reg_t<-reg_e
+	Escribir reg_t
+	Leer reg_e
+FinMQ
+MQ(!Eof(Cambios)) // añadir estudiantes si faltan 
+	si(Tipo==2) ent
+		reg_t<-reg_c
+		Escribir reg_t
+	Finsi
+	Leer reg_c
+FInMQ
+
+Escribir("La razon de cambio fue"+(new_e/erase_e))
+Escribir("La media de promedios cambiados fue "+(promc/npromc))
+FIN
+
+2. Nuevo inmueble, retiro,modificacion al precio, consulta
+
+INICIO
+Buffer Inmueble
+	Disco
+	reg_i
+	CLAVE PRINCIPAL = numeroid
+	direccion
+	numeroid
+	codigo
+	precio
+FinBUffer
+
+Buffer Gastos
+	Disco
+	reg_g
+	CLAVE PRINCIPAL = numeroin
+	fecha
+	nfac
+	concepto
+	costo
+FinBuffer
+Abrir Inmuebles("rw")
+
+on<-true
+MQ(on)
+Leer op
+MQ(op<1 || op>5)
+FinMQ
+	DD op
+	1: // Añadir
+		Leer(direccion, numeroid,codigo,precio)
+		si(reg_i numeroid = numeroid) ent
+			Escribir ("Ya hay inmueble")
+		Sino
+			Escribir reg_i
+		FInsi
+	2: // retirar
+		Leer num
+		si(reg_i numeroid = num) ent
+			Borrar reg_i numeroid = num
+		Sino
+			Escribir ("No hay inmueble")
+		FInsi
+	3: // Modificación
+		Leer num
+		si(reg_i numeroid = num) ent
+			Leer reg_i numeroid = num
+			Leer new_p
+			precio<-new_p
+			Reescribir reg_i
+		Sino
+			Escribir("No hay inmueble")
+		FInsi
+	4: // Consulta
+		Leer num
+		si(reg_i numeroid = num) ent
+			Leer reg_i numeroid = num
+			Leer reg_i
+			Escribir(reg_i)
+		Sino
+			Escribir("No hay inmueble")
+		FInsi
+	5: 
+		on<-falso
+	FInDD
+
+FINMQ
+Cerrar Inmuebles
+
+Abrir Inmuebles("rw")
+Abrir Gastos("r")
+Leer reg_i
+Leer reg_g
+MQ(!Eof(Inmuebles) & !EOf(Gastos))
+	si(numeroid != numeroin) ent
+		si(numeroid>numeroin) ent 
+			Leer reg_g
+		Sino
+			Escribir(reg_i)
+			Leer reg_i
+		Finsi 
+	Sino
+		totg<-precio
+		MQ(numeroid==numeroin)
+			totg<-totg-costo
+			Leer reg_g
+			si(Eof(reg_g))ent
+				break;
+			Finsi
+		FinMQ
+		Escribir ("numeroid"+" recibe "+totg)
+	Finsi
+FINMQ
+
+MQ(!Eof(Inmuebles)) 
+	Escribir ("numeroid"+" recibe "+precio)
+	Leer reg_i
+FinMQ
+
+FIN

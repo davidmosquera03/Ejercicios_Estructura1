@@ -1,0 +1,242 @@
+INICIO
+	Buffer
+		F1
+		Disco
+		reg_f1
+		campos1
+	FinBuffer
+
+	Buffer
+		F2
+		Disco
+		reg_f2
+		campos2
+	FinBuffer
+	
+	Buffer
+		C
+		Disco
+		reg_c
+		camposc
+	FinBuffer
+
+	Buffer
+		D
+		Disco
+		reg_d
+		camposd
+	FinBuffer
+
+	Abrir F1("r")
+		F2("r")
+		C("w")
+		D("w")
+	Leer reg_f1
+	Leer reg_f2
+	MQ(!EOF(F1) && !EOF(F2) Hacer
+		si(campo1=campo2) ent
+			reg_c<-reg_f1
+			Escribir reg_c
+			Leer reg_f1
+			Leer reg_f2
+		sino
+			si(campo1<campo2) ent
+			  	reg_d<-reg_f1
+			  	Escribir reg_d
+			  	Leer reg_f1
+			sino
+				reg_d<-reg_f2
+				Escribir reg_d
+				Leer reg_f2	
+			Finsi
+		Finsi
+	
+	FinMQ
+	MQ(!Eof(F1)) 
+		Reg_d<-reg_f1
+		Escribir reg_d
+		Leer reg_f1
+	FInMQ
+	MQ(!Eof(F2))
+		reg_d<-reg_f2
+		Escribir reg_d
+		Leer reg_f2	
+	FINMQ
+
+FIN
+
+EJERCICIO 2
+
+INICIO
+
+Buffer Local
+   Disco 
+   reg_l
+   Numero N[2]
+   Area N[1.2]
+   VlrMes N[10.2]
+   Dueño X[30]
+   Tipo N[1]
+FinBUffer
+
+
+Buffer Gastos
+   Disco
+   reg_g
+   NumL N[2]
+   Descripcion X[20]
+   Dia N[2]
+   Valor N[8.2]
+
+FinBuffer
+
+Abrir Local(Lectura)
+Abrir Gastos(Lectura)
+Leer  reg_l
+leer reg_g
+Total=0
+Escribir("Numero local, Dueño, valor total")
+MQ(!Eof(Local) || !Eof(Gastos)) hacer
+  sumaT=0
+  sumaT=SumaT+VlrMes
+  si(Numero!=NumL) ent
+     Escribir numero, Dueño, VlrMes
+  sino
+      MQ((Numl=Numero) & !Eof(Gastos))
+          SumaT= SumaT+valor
+	  Leer reg_g
+      finMQ
+      Leer reg_l
+      Total=Total+SumaT
+  FInsi
+
+FinMQ
+
+FIN
+
+EJERCICIO 3
+
+Inicio
+Buffer Candidatos
+  Disco
+  reg_c
+  cedula
+  nombre
+  dir
+  tel
+  email
+  tituloC
+  puntajeC
+FinBuffer
+
+Buffer Empleos
+  Disco
+  reg_e
+  puesto
+  salario
+  empresa
+  titulo
+  puntaje_min
+  cedulaE
+  emailE
+FInBuffer
+
+Entero ced
+Leer ced
+Abrir Candidatos(Lectura)
+Abrir Empleos(Lectura)
+
+booleano found<-false
+Leer reg_c
+MQ(!Eof(Candidatos) || !found)
+  si(cedula==ced)ent
+    found=true
+  sino
+    Leer reg_c
+  Finsi
+FinMQ
+
+Leer reg_e
+si(found)
+  MQ(!Eof(Empleos)) 
+     si(puntajeC>=puntaje_min ) ent
+	Escribir(reg_e)
+     FInsi
+     Leer reg_e
+  FinMQ
+
+sino
+  Escribir("El candidato no está registrado")
+Finsi
+Cerrar Empleos,Candidatos
+FIN
+
+EJERCICIO 4
+INICIO
+Buffer Piloto
+	Disco
+	reg_p
+	nombre
+	ncarro
+	pais
+FinBUffer
+
+Buffer Carrera
+	Disco
+	reg_c
+	codigoc
+	nombrec
+	Carros[8]
+FinBuffer
+
+Abrir Piloto("r)
+Abrir Carrera("r")
+
+max<-(-1)
+max_pilot<-""
+Leer reg_p
+Leer reg_c
+puntos<-0
+MQ(!Eof(Piloto)) 
+	i<-1 // Indice de pseudo
+	MQ(carros[i]!=ncarro & i<=8) //Buscar posición de corredor
+		i++
+	FinMQ
+	DD i // agregar puntos a corredor
+	1:
+		ptos+=10	
+	2:
+		ptos+=8
+	3:
+		ptos+=6
+	4:
+		ptos+=5
+	5:
+		ptos+=4
+	6:
+		ptos+=3
+	7:
+		ptos+=2
+	8:
+		ptos+=1
+	FInDD
+	Leer reg_c // cambiar de carrera
+	si(Eof(reg_c)) ent
+		si(max<puntos)ent
+			max<-puntos
+			max_p<-nombre
+		Finsi
+		cerrar Carreras
+		Abrir Carreras("r")
+		Leer reg_c
+		Leer reg_p
+		puntos<-0 //reinicia cuenta de puntos
+	Finsi
+
+FINMQ
+Cerrar Piloto
+Escribir("El piloto con mas puntos es ",max_p," con puntos: ",max)
+FIN	
+	
+
+

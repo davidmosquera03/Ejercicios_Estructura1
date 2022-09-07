@@ -1,0 +1,99 @@
+INICIO
+
+Buffer Plato
+Dispositivo Disco
+Reg_Plato
+ ClavePrincipal = Nombre
+ ClaveSecundaria = CategoriaPlato
+Nombre
+Precio
+CategoriaPlato
+Ingrediente [20] // Vector de 20 posiciones, máximo hay 20 ingredientes por plato, si
+tiene menos de 20 ingredientes las sgtes posiciones del vector están con blancos.
+X[20]
+CantidadRequerida [20] // Cantidad de ingrediente requerido por el plato
+FinBuffer
+
+Buffer Inventario // Corresponde a existencias de los Ingredientes del Restaurante
+Dispositivo Disco
+Reg_Inventario
+ ClavePrincipal = NombreIng
+NombreIng // Nombre del ingrediente
+UnidadMedida
+CantidadExistencias
+Fin Buffer
+
+Buffer Categorias // Los platos se clasifican por categorías: Ensaladas, Pescados,
+				Sopas, etc
+Reg_Categoria
+ Dispositivo Disco
+ ClavePrincipal = NombreCategoria
+ NombreCategoria
+ Descripcion
+ JefeCategoria
+Fin Buffer
+
+
+
+Abrir Plato,Inventario,Categorias("r")
+on=true
+MQ(on)
+	Leer op
+	Mq(op<1 || op>4) hacer
+		Leer op
+	FInMQ
+	DD op:
+	1:
+	leer cat
+	si(Reg_Categoria NombreCategoria=cat) ent
+		Leer Reg_Categoria NombreCategoria=cat
+		Escribir JefeCategoria //jefe categoría
+	
+	Leer Reg_Plato CategoriaPlato=cat
+	MQ(!Eof(Reg_Plato) hacer
+		Escribir Nombre //nombre cada plato de esa categoría
+		para i<-1 hasta 20 con paso 1 hacer
+			Escribir Ingrediente[i]
+			Escribir CantidadRequerida[i]
+		Finpara
+	FInMQ
+	Sino
+		Escribir("No hay platos en esa categoría")
+	FInsi
+	
+	2:
+	Leer platoC
+	si(Reg_Plato Nombre = platoC) ent
+		Leer Reg_Plato Nombre = PlatoC //plato 
+		i<-0
+		suficiente<-verdadero
+		MQ(i!=20 || suficiente)
+			Leer Reg_Inventario NombreIng = Ingrediente[i]
+			i++
+			si(CantidadRequerida[i]<CantidadExistencias)ent
+				suficiente<-falso
+				Escribir("No hay suficientes ingredientes para el plato")
+			Finsi
+		FinMQ
+		
+	Sino
+		Escribir("No hay plato con ese nombre")
+	Finsi
+	3:
+	max<-(-Infinity)
+	maxP<-""
+	Leer Reg_Plato
+	MQ(!Eof(Reg_Plato)
+		si(Precio>max) ent
+			max<-precio
+			maxP<-Nombre
+		Finsi
+		Leer Reg_Plato
+	FinMQ
+	Escribir("El plato más costoso es ",maxP", que cuesta ",max)
+	4:
+	on<-falso
+
+
+FinMQ
+FIN

@@ -1,0 +1,152 @@
+1.
+INICIO
+
+Buffer Ganan
+Disco
+reg_g
+carrera N
+jockey
+ncaballo
+dist
+tiempo
+
+FinBuffer
+
+Buffer Caballos
+Disco
+reg_c
+ncaballoc
+nombrec
+peso
+raza
+
+FinBuffer
+
+Abrir Caballos("r")
+Abrir Ganan("r")
+
+Real totV<-0
+Real totC<-0
+Real min_v<-(-1)
+
+leer reg_c
+leer reg_g
+MQ(!Eof(reg_c)) hacer
+	Real v_carrera<-0 //velocidad en carrera actual
+    	si(ncaballo==ncaballoc) ent
+		v_carrera<-dist/tiempo
+		Escribir("la velocidad de ",nombrec," es de ",v_carrera) //decir velocidad en actual carrera
+		totV<-totV+v_carrera
+		totC<-totC+v_carrera 
+	Finsi
+	leer reg_g // cambiar de registro de Ganan
+	si(Eof(reg_g))ent
+		si(totC<min_v)ent //actualizar velocidad minima total si es el caso
+		   string min_c<-nombrec //guardar nombre caballo
+		   min_v<-totC 
+		Finsi
+		Cerrar Ganan
+		Abrir Ganan("r") //reabrir Ganan
+		leer reg_c //cambiar de caballo
+		totC<-0 // Reiniciar velocidad total de caballo
+	Finsi
+	
+FInMQ
+
+Escribir("El caballo con menor velocidad total es ",min_c)
+Escribir("la velocidad total es ",totV)
+
+Cerrar Ganan
+Cerrar Caballos
+
+FIN
+
+
+2.
+
+Se tiene creado un archivo ordenado por codigoA (codigo de asignatura)
+
+Buffer Asignaturas
+Disco
+reg_a
+CLAVE PRINCIPAL = codigoA
+CLAVE SECUNDARIA = cedulaP
+codigoA 
+nombreA
+curso	
+creditos
+cedulaP
+FinBUffer
+
+Se tiene otro archivo ordenado por cedula, donde categoria puede ser "catedratico", "titular", "asociado" o"ayudante", 
+Buffer Profesor
+Disco
+reg_p
+CLAVE PRINCIPAL = cedula
+CLAVE SECUNDARIA = categoria
+nombre
+cedula
+fechaIng
+fechaNac
+categoria
+FInBuffer
+
+Abrir Asignaturas("r)
+Abrir Profesor("r")
+Escribir("Introducir cedula del docente")
+Leer cedP
+si(!(reg_p cedula = cedP) && !(reg_a cedulaP = cedP)) ent
+	Escribir ("No hay docente con esa cedula que de alguna asignaturas")
+Sino
+    Leer reg_p cedula = cedP
+    Escribir reg_p // Info docente
+    Leer reg_a cedulaP = cedP
+    MQ(!Eof(Asignaturas) 
+	Escribir(reg_a)
+   FInMQ
+FInsi
+vector cat[4]=[0,0,0,0]
+vector cnames = ["catedratico","titular","asociado","ayudante"]
+Cerrar Asignaturas, Profesor
+Abrir Profesor("r")
+Leer reg_p
+MQ(!Eof(Profesor))
+	DD categoria:
+	caso "catedratico":
+		cat[0]+=1
+	caso "titular":
+		cat[1]+=1
+	caso "asociado":
+		cat[2]+=1
+	caso "ayudante
+		cat[3]+=1
+	FInMQ
+	Leer reg_p
+FInMQ
+Cerrar Profesor
+max<-cat[0]
+n_max<-cnames[0] // Siguiendo indices de java
+Para i<-1 hasta 3 con paso 1 
+	si(cat[i]>max) ent
+	   max<-cat[i]
+	   n_max<-cnames[i]
+	FInsi
+
+FInpara
+Escribir("la categoría con mas personal es "+n_max+" con "+max" profesores")
+FIN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
