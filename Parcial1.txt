@@ -27,7 +27,7 @@ Abrir Ganan("r")
 
 Real totV<-0
 Real totC<-0
-Real min_v<-(-1)
+Real min_v<-(Infinity)
 
 leer reg_c
 leer reg_g
@@ -38,7 +38,7 @@ MQ(!Eof(reg_c)) hacer
 		Escribir("la velocidad de ",nombrec," es de ",v_carrera) //decir velocidad en actual carrera
 		totV<-totV+v_carrera
 		totC<-totC+v_carrera 
-	Finsi
+		Finsi
 	leer reg_g // cambiar de registro de Ganan
 	si(Eof(reg_g))ent
 		si(totC<min_v)ent //actualizar velocidad minima total si es el caso
