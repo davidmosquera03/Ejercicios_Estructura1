@@ -41,7 +41,7 @@ MQ(!Eof(reg_c)) hacer
 		Finsi
 	leer reg_g // cambiar de registro de Ganan
 	si(Eof(reg_g))ent
-		si(totC<min_v)ent //actualizar velocidad minima total si es el caso
+		si(totC<min_v & totC!=0)ent //actualizar velocidad minima total si es el caso y si tiene velocidades
 		   string min_c<-nombrec //guardar nombre caballo
 		   min_v<-totC 
 		Finsi
