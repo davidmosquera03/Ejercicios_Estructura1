@@ -87,6 +87,7 @@ public class Diferido {
                     }
                 }
             }
+            
             while (line_e != null) { // si quedan estudAntes copiar
                 reg_temp.println(line_e);
                 line_e = reg_e.readLine();

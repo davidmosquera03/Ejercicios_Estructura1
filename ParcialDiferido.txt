@@ -48,34 +48,32 @@ npromc<-0
 promc<-0
 MQ(!Eof(EstudAntes) || !Eof(Cambios))
 	si(cod==codc) ent
-	   si(Tipo==1) ent // mismo y tipo retirar
-		erase_e<-erase_e+1
-           sino
-		si(Tipo==3) // cambiar promedio
-		   reg_t<-reg_c
-		   nprom<-nprom+1
-		   promc<-promc+Promc
-		   Escribir reg_t
-		   
-		FInsi
-		Leer reg_c
-		Leer reg_e
+	    si(Tipo==1) ent // mismo y tipo retirar
+			erase_e<-erase_e+1
+        sino
+			si(Tipo==3) // cambiar promedio
+		   		reg_t<-reg_c
+		   		nprom<-nprom+1
+		   		promc<-promc+Promc
+		   		Escribir reg_t
+			FInsi
 	   Finsi
+	        Leer reg_c
+		Leer reg_e
 	sino // cod!=codc
 	    si(cod<codc) ent
-		reg_t<-reg_e 	// Copiar estudiante existente
-		Escribir reg_t
-		Leer reg_e // Ir a siguiente estudiante
-	    sino
-		si(Tipo==2) ent // Añadir estudiante
-			new_e<-new_e+1
-			reg_t<-reg_c
-			Escribir reg_t	
-		FInsi
-		Leer reg_c // ir a siguiente cambio
-	    Finsi
+			reg_t<-reg_e 	// Copiar estudiante existente
+			Escribir reg_t
+			Leer reg_e // Ir a siguiente estudiante
+	    sino   // cod>codc
+			si(Tipo==2) ent // Añadir estudiante
+				new_e<-new_e+1
+				reg_t<-reg_c
+				Escribir reg_t		
+			Finsi
+			Leer reg_c // ir a siguiente cambio
+	    Finsi  
 	FInsi
-	
 FINMQ
 MQ(!Eof(Estudiantes)) // Pasar estudiantes si quedan
 	reg_t<-reg_e
